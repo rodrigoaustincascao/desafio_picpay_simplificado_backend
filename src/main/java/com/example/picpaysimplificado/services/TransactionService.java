@@ -1,6 +1,6 @@
 package com.example.picpaysimplificado.services;
 
-import org.hibernate.mapping.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,8 @@ import com.example.picpaysimplificado.dtos.TransactionDTO;
 import com.example.picpaysimplificado.repositories.TransactionRepository;
 
 import java.math.*;
-import java.time.LocalDateTime;;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class TransactionService {
@@ -55,6 +56,7 @@ public class TransactionService {
 
         this.notificationService.sendNotification(sender, "Transação realizada com sucesso!");
         this.notificationService.sendNotification(receiver, "Transação recebida com sucesso!");
+        System.out.println("Transação realizada.");
         return newTransaction;
 
     }
@@ -63,11 +65,11 @@ public class TransactionService {
         ResponseEntity<Map> authorizationResponse = restTemplate.getForEntity("https://util.devi.tools/api/v2/authorize", Map.class);
 
         if(authorizationResponse.getStatusCode() == HttpStatus.OK) {
-            var message = authorizationResponse.getBody(); //.get("status");
+            String message = (String) authorizationResponse.getBody().get("status");
             System.out.println(message);
-            System.exit(0);
-            return true;
-            // return  "success".equalsIgnoreCase(message);
+            System.out.println("success".equals(message));
+            
+            return  "success".equals(message);
             
         } else return false;
     }
